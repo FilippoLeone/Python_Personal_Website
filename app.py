@@ -2,17 +2,10 @@
 Routes and views for the bottle application.
 """
 
-<<<<<<<
 from bottle import default_app, route, view, request
 from datetime import datetime
 from main import Main
 import json
-=======
-from bottle import route, view, request
-from datetime import datetime
-from main import Main
-import json
->>>>>>>
 
 @route('/')
 @route('/home')

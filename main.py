@@ -9,8 +9,4 @@ class Main:
             version = 'Unknown version'
         return version
 
-    def NewsBadge():
-        return 1
-    
-
 
