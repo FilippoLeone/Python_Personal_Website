@@ -1,46 +1,67 @@
 """
-This script runs the application using a development server.
+Routes and views for the bottle application.
 """
 
-import bottle
-import os
-import sys
-# routes contains the HTTP handlers for our server and must be imported.
-import routes
+from bottle import route, view, request
+from datetime import datetime
+from main import Main
+import json
 
-if '--sec_debug' in sys.argv[1:] or 'SERVER_DEBUG' in os.environ:
-    # Debug mode will enable more verbose output in the console window.
-    # It must be set at the beginning of the script.
-    bottle.debug(True)
+@route('/')
+@route('/home')
+@view('index')
+def home():
+    obj = Main
+    return dict(
+        year=datetime.now().year,
+        version=obj.GetVersion()
+    )
 
-def wsgi_app():
-    """Returns the application to make available through wfastcgi. This is used
-    when the site is published to Microsoft Azure."""
-    return bottle.default_app()
+@route('/contact')
+@view('contact')
+def contact():
+    """Renders the contact page."""
+    return dict(
+        title='Contact',
+        message='Send me an email.',
+        year=datetime.now().year
+    )
 
-if __name__ == '__main__':
-    PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
-    STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static').replace('\\', '/')
-    HOST = os.environ.get('SERVER_HOST', 'localhost')
-    try:
-        PORT = int(os.environ.get('SERVER_PORT', '5555'))
-    except ValueError:
-        PORT = 5555
+@route('/dev_blog')
+@view('dev_blog')
+def about():
+    """Renders the about page."""
+    return dict(
+        title='DevBook',
+        message='FAQ.',
+        year=datetime.now().year
+    )
 
-    @bottle.route('/static/<filepath:path>')
-    def server_static(filepath):
-        """Handler for static files, used with the development server.
-        When running under a production server such as IIS or Apache,
-        the server should be configured to serve the static files."""
-        return bottle.static_file(filepath, root=STATIC_ROOT)
+@route('/brain')
+@view('brain')
+def brain():
+    """ Main page start add more comments here """
+    return dict(
+        title='Start',
+        message='Updated 26.05.17',
+        year=datetime.now().year
+    )
 
-    # Starts a local test server.
-    try:
-        main.GetVersion()
-    except:
-        pass
+@route('/contact_me')
+@view('contact_me')
+def contact_me():
+    # Please use your preferred method to handle this form.
+    email = request.params.get('email')
+    bodytext = request.params.get('bodytext')
+    return json.dumps({'contact':[email,bodytext]})
 
-    bottle.debug(True)
-    
-    bottle.run(server='wsgiref', host=HOST, port=PORT)
-    
+
+@route('/blog')
+@view('blog')
+def blog():
+    return dict(
+        title="Blog",
+        year=datetime.now().year
+        )
+		
+application = default_app()
